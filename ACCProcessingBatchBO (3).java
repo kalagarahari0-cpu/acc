@@ -378,7 +378,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					//Check for proc sect change as proc changed to/From may not be selected by the user. And if no proc sect is selected then skip this method
 					//Also Check if both the Base and Current MTO are present 
 					//Not necessary data should be present for both current and present part details
-					if(!(enterACCApplicationsSuppMTOSummaryDVO.getM_strProcGroupFrom().trim().isEmpty() 
+					if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && !(enterACCApplicationsSuppMTOSummaryDVO.getM_strProcGroupFrom().trim().isEmpty() 
 							&& enterACCApplicationsSuppMTOSummaryDVO.getM_strProcGroupTo().trim().isEmpty())
 							&&(null!=femdDTO.getBaseFrameApplication() && null!=femdDTO.getBaseFrameApplication().getTargetModel()
 								&& !femdDTO.getBaseFrameApplication().getTargetModel().isEmpty() &&
@@ -2037,7 +2037,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					}
 				}
 				
-				if(!matchFound){
+				if(!matchFound && !enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A")){
 					for(EnterACCEventPartDetailsDTO previousEventPartDetails : m_lEnterACCPreviousEventPartDetailsDTO){
 						
 						if(!previousEventPartDetails.isM_bolMatchDone()){
@@ -5162,7 +5162,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					}
 				}
 				
-				if(!matchFound){
+				if(!matchFound && !enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A")){
 					for(EnterACCEventPartDetailsDTO previousEventPartDetails : m_lEnterACCPreviousEventPartDetailsDTO){
 
 						if(!previousEventPartDetails.isM_bolMatchDone()){
