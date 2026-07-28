@@ -4136,7 +4136,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					}
 				}
 				
-				if(!matchFound){
+				if(!matchFound && !enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("PSP")){
 					for(EnterACCEventPartDetailsDTO previousEventPartDetails : m_lEnterACCPreviousEventPartDetailsDTO){
 						
 						if(!previousEventPartDetails.isM_bolMatchDone()){
