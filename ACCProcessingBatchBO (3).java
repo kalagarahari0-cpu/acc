@@ -378,7 +378,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					//Check for proc sect change as proc changed to/From may not be selected by the user. And if no proc sect is selected then skip this method
 					//Also Check if both the Base and Current MTO are present 
 					//Not necessary data should be present for both current and present part details
-					if(!(enterACCApplicationsSuppMTOSummaryDVO.getM_strProcGroupFrom().trim().isEmpty() 
+					if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && !(enterACCApplicationsSuppMTOSummaryDVO.getM_strProcGroupFrom().trim().isEmpty() 
 							&& enterACCApplicationsSuppMTOSummaryDVO.getM_strProcGroupTo().trim().isEmpty())
 							&&(null!=femdDTO.getBaseFrameApplication() && null!=femdDTO.getBaseFrameApplication().getTargetModel()
 								&& !femdDTO.getBaseFrameApplication().getTargetModel().isEmpty() &&
@@ -2037,7 +2037,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					}
 				}
 				
-				if(!matchFound){
+				if(!matchFound && !enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A")){
 					for(EnterACCEventPartDetailsDTO previousEventPartDetails : m_lEnterACCPreviousEventPartDetailsDTO){
 						
 						if(!previousEventPartDetails.isM_bolMatchDone()){
@@ -5162,7 +5162,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 					}
 				}
 				
-				if(!matchFound){
+				if(!matchFound && !enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A")){
 					for(EnterACCEventPartDetailsDTO previousEventPartDetails : m_lEnterACCPreviousEventPartDetailsDTO){
 
 						if(!previousEventPartDetails.isM_bolMatchDone()){
@@ -9604,7 +9604,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SHARE_RATE_CHANGE.value());
 							}
 							
-							if(previousEventPartDetails.getM_strPartSectionCode()!=null&&
+							if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && previousEventPartDetails.getM_strPartSectionCode()!=null&&
 									!previousEventPartDetails.getM_strPartSectionCode().equalsIgnoreCase(currentEventPartDetails.getM_strPartSectionCode())){
 								strMultipleIndicatorChangeIdentifier = strMultipleIndicatorChangeIdentifier + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value();
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value());
@@ -10194,7 +10194,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SHARE_RATE_CHANGE.value());
 							}
 							
-							if(currentEventPartDetails.getM_strPartSectionCode()!=null&&
+							if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && currentEventPartDetails.getM_strPartSectionCode()!=null&&
 									!currentEventPartDetails.getM_strPartSectionCode().equalsIgnoreCase(previousEventPartDetails.getM_strPartSectionCode())){
 								strMultipleIndicatorChangeIdentifier = strMultipleIndicatorChangeIdentifier + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value();
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value());
@@ -11917,6 +11917,12 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 			EnterACCEventPartDetailsDTO currentEventPartDetails, 
 			EnterACCEventPartDetailsDTO previousEventPartDetails, String typeOfMatch) {
 		
+		// Skip Design Section and Proc Group change for E2A events
+		if(enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") 
+				&& ("DESIGN_SECT_CHANGE_MATCH".equals(typeOfMatch) || "PROC_GROUP_CHANGE_MATCH".equals(typeOfMatch))){
+			return false;
+		}
+		// Skip Part Quantity change for PSP events
 		boolean recordMatched = false;
 		/*
 		 * Check if FEMD in Current(currentEventPartDetails) and Base(previousEventPartDetails) event part record or  matched with list 'enterACCApplicationsSuppMTOSummaryDVO.getM_lEnterACCSuppFEMDMTODTOList()'
@@ -12132,7 +12138,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 			previousEventPartDetailsIndexObj = new EnterACCEventPartDetailsDTO();
 			previousEventPartDetailsIndexObj = m_lEnterACCPreviousEventPartDetailsDTO.get(index);
 			
-			if(!previousEventPartDetailsIndexObj.getM_strProcSectCode().equalsIgnoreCase(currentEventPartDetails.getM_strProcSectCode())){
+			if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && !previousEventPartDetailsIndexObj.getM_strProcSectCode().equalsIgnoreCase(currentEventPartDetails.getM_strProcSectCode())){
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.PROC_GROUP_CHANGE.value();
 			}
 			
@@ -12148,7 +12154,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SHARE_RATE_CHANGE.value();
 			}
 			
-			if(!previousEventPartDetailsIndexObj.getM_strPartSectionCode().equalsIgnoreCase(currentEventPartDetails.getM_strPartSectionCode())){
+			if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && !previousEventPartDetailsIndexObj.getM_strPartSectionCode().equalsIgnoreCase(currentEventPartDetails.getM_strPartSectionCode())){
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value();
 			}
 			
