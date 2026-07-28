@@ -9592,7 +9592,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SUPPLIER_CHANGE.value());
 							}
 							
-							if(previousEventPartDetails.getM_intPartQty()!=null&&
+							if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("PSP") && previousEventPartDetails.getM_intPartQty()!=null&&
 									!(previousEventPartDetails.getM_intPartQty()==currentEventPartDetails.getM_intPartQty())){
 								strMultipleIndicatorChangeIdentifier = strMultipleIndicatorChangeIdentifier + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.QTY_CHANGE.value();
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.QTY_CHANGE.value());
@@ -9604,7 +9604,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SHARE_RATE_CHANGE.value());
 							}
 							
-							if(previousEventPartDetails.getM_strPartSectionCode()!=null&&
+							if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && previousEventPartDetails.getM_strPartSectionCode()!=null&&
 									!previousEventPartDetails.getM_strPartSectionCode().equalsIgnoreCase(currentEventPartDetails.getM_strPartSectionCode())){
 								strMultipleIndicatorChangeIdentifier = strMultipleIndicatorChangeIdentifier + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value();
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value());
@@ -10182,7 +10182,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SUPPLIER_CHANGE.value());
 							}
 							
-							if(currentEventPartDetails.getM_intPartQty()!=null&&
+							if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("PSP") && currentEventPartDetails.getM_intPartQty()!=null&&
 									!(currentEventPartDetails.getM_intPartQty()==previousEventPartDetails.getM_intPartQty())){
 								strMultipleIndicatorChangeIdentifier = strMultipleIndicatorChangeIdentifier + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.QTY_CHANGE.value();
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.QTY_CHANGE.value());
@@ -10194,7 +10194,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SHARE_RATE_CHANGE.value());
 							}
 							
-							if(currentEventPartDetails.getM_strPartSectionCode()!=null&&
+							if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && currentEventPartDetails.getM_strPartSectionCode()!=null&&
 									!currentEventPartDetails.getM_strPartSectionCode().equalsIgnoreCase(previousEventPartDetails.getM_strPartSectionCode())){
 								strMultipleIndicatorChangeIdentifier = strMultipleIndicatorChangeIdentifier + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value();
 								lstIndicators.add(BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value());
@@ -11917,6 +11917,16 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 			EnterACCEventPartDetailsDTO currentEventPartDetails, 
 			EnterACCEventPartDetailsDTO previousEventPartDetails, String typeOfMatch) {
 		
+		// Skip Design Section and Proc Group change for E2A events
+		if(enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") 
+				&& ("DESIGN_SECT_CHANGE_MATCH".equals(typeOfMatch) || "PROC_GROUP_CHANGE_MATCH".equals(typeOfMatch))){
+			return false;
+		}
+		// Skip Part Quantity change for PSP events
+		if(enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("PSP") 
+				&& "PART_QTY_CHANGE_MATCH".equals(typeOfMatch)){
+			return false;
+		}
 		boolean recordMatched = false;
 		/*
 		 * Check if FEMD in Current(currentEventPartDetails) and Base(previousEventPartDetails) event part record or  matched with list 'enterACCApplicationsSuppMTOSummaryDVO.getM_lEnterACCSuppFEMDMTODTOList()'
@@ -12132,7 +12142,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 			previousEventPartDetailsIndexObj = new EnterACCEventPartDetailsDTO();
 			previousEventPartDetailsIndexObj = m_lEnterACCPreviousEventPartDetailsDTO.get(index);
 			
-			if(!previousEventPartDetailsIndexObj.getM_strProcSectCode().equalsIgnoreCase(currentEventPartDetails.getM_strProcSectCode())){
+			if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && !previousEventPartDetailsIndexObj.getM_strProcSectCode().equalsIgnoreCase(currentEventPartDetails.getM_strProcSectCode())){
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.PROC_GROUP_CHANGE.value();
 			}
 			
@@ -12140,7 +12150,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SUPPLIER_CHANGE.value();
 			}
 			
-			if(!(previousEventPartDetailsIndexObj.getM_intPartQty()==currentEventPartDetails.getM_intPartQty())){
+			if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("PSP") && !(previousEventPartDetailsIndexObj.getM_intPartQty()==currentEventPartDetails.getM_intPartQty())){
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.QTY_CHANGE.value();
 			}
 			
@@ -12148,7 +12158,7 @@ public class ACCProcessingBatchBO extends EmailNotificationBO {
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.SHARE_RATE_CHANGE.value();
 			}
 			
-			if(!previousEventPartDetailsIndexObj.getM_strPartSectionCode().equalsIgnoreCase(currentEventPartDetails.getM_strPartSectionCode())){
+			if(!enterACCApplicationsSuppMTOSummaryDVO.getM_strCurrentEvent().contains("E2A") && !previousEventPartDetailsIndexObj.getM_strPartSectionCode().equalsIgnoreCase(currentEventPartDetails.getM_strPartSectionCode())){
 				hierarchyChanges = hierarchyChanges + BatchConstantsIF.ACC_APP_CONSTANTS.ACC_PART_INDICATOR.DESIGN_SECTION_CHANGE.value();
 			}
 			
